@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Standards Clubs Interactive</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #e0f7fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        #container {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 80%;
+            max-width: 1000px;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .club, .game {
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .club.active, .game.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .club.hidden, .game.hidden {
+            display: none;
+        }
+        .button {
+            background-color: #00796b;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            cursor: pointer;
+            font-size: 18px;
+            margin: 10px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .button:hover {
+            background-color: #004d40;
+        }
+        .button:active {
+            transform: scale(0.98);
+        }
+        .button:disabled {
+            background-color: #c0c0c0;
+            cursor: not-allowed;
+        }
+        #background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #4fc3f7, #00bcd4);
+            z-index: -1;
+            animation: backgroundAnimation 12s infinite alternate;
+        }
+        @keyframes backgroundAnimation {
+            0% { background: linear-gradient(135deg, #4fc3f7, #00bcd4); }
+            100% { background: linear-gradient(135deg, #00bcd4, #4fc3f7); }
+        }
+        .club-title {
+            font-size: 28px;
+            color: #00796b;
+            margin-bottom: 10px;
+        }
+        .club-info {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .club-image, .game-image {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        .club-image.hidden, .game-image.hidden {
+            display: none;
+        }
+        .animated-fade {
+            animation: fadeIn 1s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .animated-bounce {
+            animation: bounce 1s ease-in-out;
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-30px); }
+            60% { transform: translateY(-15px); }
+        }
+        .club-timer, .game-timer {
+            font-size: 20px;
+            color: #d32f2f;
+            margin: 20px 0;
+        }
+        #game-canvas {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .reward-box {
+            padding: 20px;
+            background: #e8f5e9;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+        .reward-content {
+            font-size: 18px;
+            color: #4caf50;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="background"></div>
+        <div id="club-container">
+            <h1>Standards Clubs Interactive</h1>
+            <div id="club1" class="club active animated-fade">
+                <h2 class="club-title">Club 1: Tech Innovators</h2>
+                <p class="club-info">Welcome to Tech Innovators Club! Click below to start the first activity.</p>
+                <button class="button" onclick="nextClub(1)">Start Activity</button>
+                <img src="https://via.placeholder.com/600x300" alt="Tech Innovators" class="club-image animated-bounce">
+            </div>
+            <div id="club2" class="club hidden animated-fade">
+                <h2 class="club-title">Club 2: Coding Masters</h2>
+                <p class="club-info">Complete the coding task below to earn your badge. Type "done" and click submit.</p>
+                <input type="text" id="codingAnswer" placeholder="Your answer here" class="text-input">
+                <button class="button" onclick="checkCodingAnswer()">Submit Answer</button>
+                <button class="button" onclick="previousClub(2)">Go Back</button>
+                <img src="https://via.placeholder.com/600x300" alt="Coding Masters" class="club-image animated-bounce">
+                <p id="coding-timer" class="club-timer">Time left: <span id="coding-timer-count">45</span> seconds</p>
+            </div>
+            <div id="club3" class="club hidden animated-fade">
+                <h2 class="club-title">Club 3: Design Gurus</h2>
+                <p class="club-info">Congratulations on completing the activities! Check out your reward.</p>
+                <div class="reward-box">
+                    <div class="reward-content">You have earned a special badge for completing the club activities!</div>
+                </div>
+                <button class="button" onclick="startGame()">Start Simulation Game</button>
+                <img src="https://via.placeholder.com/600x300" alt="Design Gurus" class="club-image animated-bounce">
+            </div>
+        </div>
+
+        <div id="game-container" class="hidden">
+            <h1>Interactive Game</h1>
+            <canvas id="game-canvas" width="800" height="400"></canvas>
+            <p class="game-timer">Time left: <span id="game-timer-count">60</span> seconds</p>
+            <button class="button" onclick="restartGame()">Restart Game</button>
+        </div>
+    </div>
+
+    <script>
+        let currentClub = 1;
+        const totalClubs = 3;
+        let codingTimerInterval, gameTimerInterval;
+
+        function updateProgress() {
+            const progress = (currentClub / totalClubs) * 100;
+            document.getElementById('progress-bar-inner').style.width = progress + '%';
+        }
+
+        function nextClub(club) {
+            document.getElementById(`club${club}`).classList.remove('active');
+            document.getElementById(`club${club}`).classList.add('hidden');
+            currentClub = club + 1;
+            document.getElementById(`club${currentClub}`).classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById(`club${currentClub}`).classList.add('active');
+                updateProgress();
+                if (currentClub === 2) startCodingTimer();
+            }, 10);
+        }
+
+        function previousClub(club) {
+            document.getElementById(`club${club}`).classList.remove('active');
+            document.getElementById(`club${club}`).classList.add('hidden');
+            currentClub = club - 1;
+            document.getElementById(`club${currentClub}`).classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById(`club${currentClub}`).classList.add('active');
+                updateProgress();
+            }, 10);
+        }
+
+        function checkCodingAnswer() {
+            const userAnswer = document.getElementById('codingAnswer').value.trim().toLowerCase();
+            if (userAnswer === 'done') {
+                clearInterval(codingTimerInterval);
+                nextClub(3);
+            } else {
+                alert('Incorrect answer. Try again!');
+            }
+        }
+
+        function startCodingTimer() {
+            let timeLeft = 45;
+            document.getElementById('coding-timer-count').textContent = timeLeft;
+            codingTimerInterval = setInterval(() => {
+                timeLeft -= 1;
+                document.getElementById('coding-timer-count').textContent = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(codingTimerInterval);
+                    alert('Time is up! Please try again.');
+                    document.getElementById('club2').classList.remove('active');
+                    document.getElementById('club2').classList.add('hidden');
+                    document.getElementById('club1').classList.remove('hidden');
+                    document.getElementById('club1').classList.add('active');
+                    currentClub = 1;
+                    updateProgress();
+                }
+            }, 1000);
+        }
+
+        function startGame() {
+            document.getElementById('club-container').classList.add('hidden');
+            document.getElementById('game-container').classList.remove('hidden');
+            let gameTimeLeft = 60;
+            document.getElementById('game-timer-count').textContent = gameTimeLeft;
+            gameTimerInterval = setInterval(() => {
+                gameTimeLeft -= 1;
+                document.getElementById('game-timer-count').textContent = gameTimeLeft;
+                if (gameTimeLeft <= 0) {
+                    clearInterval(gameTimerInterval);
+                    alert('Game over! Well done.');
+                }
+            }, 1000);
+
+            const canvas = document.getElementById('game-canvas');
+            const ctx = canvas.getContext('2d');
+            let x = canvas.width / 2;
+            let y = canvas.height / 2;
+            let dx = 2;
+            let dy = 2;
+            const radius = 20;
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.beginPath();
+                ctx.arc(x, y, radius, 0, Math.PI * 2);
+                ctx.fillStyle = '#ff5722';
+                ctx.fill();
+                ctx.closePath();
+
+                x += dx;
+                y += dy;
+
+                if (x + radius > canvas.width || x - radius < 0) dx = -dx;
+                if (y + radius > canvas.height || y - radius < 0) dy = -dy;
+
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        function restartGame() {
+            clearInterval(gameTimerInterval);
+            document.getElementById('game-container').classList.add('hidden');
+            document.getElementById('club-container').classList.remove('hidden');
+            document.getElementById('club1').classList.remove('hidden');
+            document.getElementById('club1').classList.add('active');
+            currentClub = 1;
+            updateProgress();
+        }
+
+        // Initialize
+        updateProgress();
+    </script>
+</body>
+</html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Story Mode</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            color: #333;
+        }
+        #container {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 80%;
+            max-width: 900px;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .scene, .game {
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .scene.active, .game.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .scene.hidden, .game.hidden {
+            display: none;
+        }
+        .button {
+            background-color: #00796b;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            cursor: pointer;
+            font-size: 18px;
+            margin: 10px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .button:hover {
+            background-color: #004d40;
+        }
+        .button:active {
+            transform: scale(0.98);
+        }
+        .button:disabled {
+            background-color: #c0c0c0;
+            cursor: not-allowed;
+        }
+        .text-input {
+            width: calc(100% - 26px);
+            padding: 12px;
+            border-radius: 8px;
+            border: 2px solid #00796b;
+            margin-top: 10px;
+            font-size: 18px;
+        }
+        .animated-fade {
+            animation: fadeIn 1s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .animated-bounce {
+            animation: bounce 1s ease-in-out;
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-30px); }
+            60% { transform: translateY(-15px); }
+        }
+        #game-canvas {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .scene-timer, .game-timer {
+            font-size: 20px;
+            color: #d32f2f;
+            margin: 20px 0;
+        }
+        .reward-box {
+            padding: 20px;
+            background: #e8f5e9;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+        .reward-content {
+            font-size: 18px;
+            color: #4caf50;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="scene-container">
+            <h1>Story Mode</h1>
+            <div id="scene1" class="scene active animated-fade">
+                <h2>Chapter 1: The Beginning</h2>
+                <p>Welcome to the first chapter of our story. Click below to continue to the next chapter.</p>
+                <button class="button" onclick="nextScene(1)">Continue</button>
+                <img src="https://via.placeholder.com/600x300" alt="Chapter 1" class="animated-bounce">
+            </div>
+            <div id="scene2" class="scene hidden animated-fade">
+                <h2>Chapter 2: The Challenge</h2>
+                <p>You’ve reached a pivotal moment in the story. Solve the puzzle to proceed.</p>
+                <input type="text" id="puzzleAnswer" placeholder="Enter your answer" class="text-input">
+                <button class="button" onclick="checkPuzzleAnswer()">Submit</button>
+                <button class="button" onclick="previousScene(2)">Back</button>
+                <img src="https://via.placeholder.com/600x300" alt="Chapter 2" class="animated-bounce">
+                <p id="puzzle-timer" class="scene-timer">Time left: <span id="puzzle-timer-count">60</span> seconds</p>
+            </div>
+            <div id="scene3" class="scene hidden animated-fade">
+                <h2>Chapter 3: The Finale</h2>
+                <p>Congratulations! You’ve reached the end. Complete the final task to receive your reward.</p>
+                <div class="reward-box">
+                    <div class="reward-content">You have earned a special reward for completing the story!</div>
+                </div>
+                <button class="button" onclick="startGame()">Start Mini-Game</button>
+                <img src="https://via.placeholder.com/600x300" alt="Chapter 3" class="animated-bounce">
+            </div>
+        </div>
+
+        <div id="game-container" class="hidden">
+            <h1>Mini-Game</h1>
+            <canvas id="game-canvas" width="800" height="400"></canvas>
+            <p class="game-timer">Time left: <span id="game-timer-count">60</span> seconds</p>
+            <button class="button" onclick="restartGame()">Restart Game</button>
+        </div>
+    </div>
+
+    <script>
+        let currentScene = 1;
+        const totalScenes = 3;
+        let puzzleTimerInterval, gameTimerInterval;
+
+        function updateProgress() {
+            const progress = (currentScene / totalScenes) * 100;
+            document.getElementById('progress-bar-inner').style.width = progress + '%';
+        }
+
+        function nextScene(scene) {
+            document.getElementById(`scene${scene}`).classList.remove('active');
+            document.getElementById(`scene${scene}`).classList.add('hidden');
+            currentScene = scene + 1;
+            document.getElementById(`scene${currentScene}`).classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById(`scene${currentScene}`).classList.add('active');
+                updateProgress();
+                if (currentScene === 2) startPuzzleTimer();
+            }, 10);
+        }
+
+        function previousScene(scene) {
+            document.getElementById(`scene${scene}`).classList.remove('active');
+            document.getElementById(`scene${scene}`).classList.add('hidden');
+            currentScene = scene - 1;
+            document.getElementById(`scene${currentScene}`).classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById(`scene${currentScene}`).classList.add('active');
+                updateProgress();
+            }, 10);
+        }
+
+        function checkPuzzleAnswer() {
+            const userAnswer = document.getElementById('puzzleAnswer').value.trim().toLowerCase();
+            if (userAnswer === 'solution') {  // Example answer for the puzzle
+                clearInterval(puzzleTimerInterval);
+                nextScene(3);
+            } else {
+                alert('Incorrect answer. Try again!');
+            }
+        }
+
+        function startPuzzleTimer() {
+            let timeLeft = 60;
+            document.getElementById('puzzle-timer-count').textContent = timeLeft;
+            puzzleTimerInterval = setInterval(() => {
+                timeLeft -= 1;
+                document.getElementById('puzzle-timer-count').textContent = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(puzzleTimerInterval);
+                    alert('Time is up! Please try again.');
+                    document.getElementById('scene2').classList.remove('active');
+                    document.getElementById('scene2').classList.add('hidden');
+                    document.getElementById('scene1').classList.remove('hidden');
+                    document.getElementById('scene1').classList.add('active');
+                    currentScene = 1;
+                    updateProgress();
+                }
+            }, 1000);
+        }
+
+        function startGame() {
+            document.getElementById('scene-container').classList.add('hidden');
+            document.getElementById('game-container').classList.remove('hidden');
+            let gameTimeLeft = 60;
+            document.getElementById('game-timer-count').textContent = gameTimeLeft;
+            gameTimerInterval = setInterval(() => {
+                gameTimeLeft -= 1;
+                document.getElementById('game-timer-count').textContent = gameTimeLeft;
+                if (gameTimeLeft <= 0) {
+                    clearInterval(gameTimerInterval);
+                    alert('Game over! Well done.');
+                    restartGame();
+                }
+            }, 1000);
+
+            const canvas = document.getElementById('game-canvas');
+            const ctx = canvas.getContext('2d');
+            let x = canvas.width / 2;
+            let y = canvas.height / 2;
+            let dx = 2;
+            let dy = 2;
+            const radius = 20;
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.beginPath();
+                ctx.arc(x, y, radius, 0, Math.PI * 2);
+                ctx.fillStyle = '#ff5722';
+                ctx.fill();
+                ctx.closePath();
+
+                x += dx;
+                y += dy;
+
+                if (x + radius > canvas.width || x - radius < 0) dx = -dx;
+                if (y + radius > canvas.height || y - radius < 0) dy = -dy;
+
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        function restartGame() {
+            clearInterval(gameTimerInterval);
+            document.getElementById('game-container').classList.add('hidden');
+            document.getElementById('scene-container').classList.remove('hidden');
+            document.getElementById('scene1').classList.remove('hidden');
+            document.getElementById('scene1').classList.add('active');
+            currentScene = 1;
+            updateProgress();
+        }
+
+        // Initialize
+        updateProgress();
+    </script>
+</body>
+</html>

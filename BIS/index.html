@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Learning Quests</title>
+    <style>
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            color: #333;
+            background-color: #f4f4f4;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        header .logo {
+            font-size: 30px;
+            font-weight: bold;
+        }
+
+        nav {
+            margin-top: 10px;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+        }
+
+        nav ul li {
+            margin: 0 20px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #007bff;
+        }
+
+        .hero {
+            background: linear-gradient(to right, #007bff, #00c851);
+            color: white;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 20px;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            animation: slideInFromLeft 1s ease-out;
+        }
+
+        .hero p {
+            font-size: 20px;
+            margin-bottom: 30px;
+            max-width: 600px;
+            animation: slideInFromRight 1.2s ease-out;
+        }
+
+        .hero a {
+            display: inline-block;
+            padding: 15px 30px;
+            background-color: #00c851;
+            color: white;
+            text-decoration: none;
+            font-size: 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+        }
+
+        .hero a:hover {
+            background-color: #007bff;
+        }
+
+        main {
+            padding: 100px 20px;
+        }
+
+        .features {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin-top: 50px;
+        }
+
+        .feature {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            flex: 1;
+            text-align: center;
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        .feature h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .feature p {
+            margin-bottom: 20px;
+        }
+
+        .feature a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .feature a:hover {
+            background-color: #00c851;
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 50px;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideInFromLeft {
+            from {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideInFromRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            nav ul li {
+                margin: 10px 0;
+            }
+
+            .features {
+                flex-direction: column;
+            }
+
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .hero p {
+                font-size: 18px;
+            }
+
+            .feature {
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo">Learning Quests</div>
+        <nav>
+            <ul>
+                <li><a href="quiz.html">Knowledge Marathon</a></li>
+                <li><a href="game.html">Interactive Quests</a></li>
+                <li><a href="simulation.html">Simulations</a></li>
+                <li><a href="hackathon.html">Hackathon</a></li>
+                <li><a href="workshop.html">Workshop</a></li>
+                <li><a href="clubs.html">Standards Clubs</a></li>
+                <li><a href="storymode.html">Story Learning</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="hero">
+        <h1>Welcome to Interactive Learning Quests</h1>
+        <p>Join us in an immersive journey to explore real-world applications of quality and safety standards through
+            quizzes, games, and simulations.</p>
+        <a href="quiz.html">Start Your Journey</a>
+    </div>
+
+    <main>
+        <section class="features">
+            <div class="feature">
+                <h3>Knowledge Marathon</h3>
+                <p>Participate in a quiz competition and challenge your knowledge of standards.</p>
+                <a href="quiz.html">Explore</a>
+            </div>
+            <div class="feature">
+                <h3>Interactive Quests</h3>
+                <p>Embark on exciting gamified quests focused on quality and safety standards.</p>
+                <a href="game.html">Start Now</a>
+            </div>
+            <div class="feature">
+                <h3>Simulations</h3>
+                <p>Experience immersive simulations that showcase the process of standardization.</p>
+                <a href="simulation.html">Learn More</a>
+            </div>
+        </section>
+
+        <section class="features">
+            <div class="feature">
+                <h3>BIS Hackathon</h3>
+                <p>Join the BIS Hackathon and develop solutions for real-world quality and safety issues.</p>
+                <a href="hackathon.html">Participate</a>
+            </div>
+            <div class="feature">
+                <h3>Virtual Workshop</h3>
+                <p>Participate in a workshop to develop new standards and improve existing ones.</p>
+                <a href="workshop.html">Join the Workshop</a>
+            </div>
+            <div class="feature">
+                <h3>Standards Club Hub</h3>
+                <p>Connect with peers and compete in challenges about BIS standards.</p>
+                <a href="clubs.html">Explore Clubs</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Interactive Learning Quests. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Sticky Header: Change background color when scrolled
+        window.addEventListener('scroll', function () {
+            const header = document.querySelector('header');
+            header.classList.toggle('scrolled', window.scrollY > 50);
+        });
+
+        // Animations for scrolling
+        const features = document.querySelectorAll('.feature');
+
+        window.addEventListener('scroll', () => {
+            features.forEach(feature => {
+                const rect = feature.getBoundingClientRect();
+                if (rect.top < window.innerHeight - 100) {
+                    feature.style.opacity = 1;
+                    feature.style.transform = 'translateY(0)';
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
